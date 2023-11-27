@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export ESPHOME_DASHBOARD_USE_PING=true
+
+libretiny_args=(
+  dashboard
+  --socket /tmp/libretiny.sock
+)
+
+if [[ -n ${DASHBOARD_USER} && -n ${DASHBOARD_PASSWORD} ]]; then
+  libretiny_args+=(
+    --username "${DASHBOARD_USER}"
+    --password "${DASHBOARD_PASSWORD}"
+  )
+fi
+
+printf "Starting NGINX\n"
+/usr/sbin/nginx
+
+cd /usr/local/libretiny-esphome || exit
+/usr/local/libretiny-esphome-venv/bin/python3 -m esphome "${libretiny_args[@]}" /etc/libretiny
