@@ -14,20 +14,22 @@ RUN rm --recursive --force \
     .gitignore .pre-commit-config.yaml .pre-commit-config.yaml .yamllint docker requirements_optional.txt \
     requirements_test.txt
 
-RUN python3 -m venv /usr/local/libretiny-esphome-venv
-WORKDIR /usr/local/libretiny-esphome-venv
-RUN bin/python3 -m pip install --upgrade pip \
- && bin/python3 -m pip install --requirement /usr/local/libretiny-esphome/requirements.txt
-
 ########################################################################################################################
 FROM registry.access.redhat.com/ubi9/ubi
+
+RUN dnf install --assumeyes python3-pip \
+  && dnf clean all \
+  && rm --recursive --force /var/cache/yum
+
 COPY --from=builder /usr/local/libretiny-esphome /usr/local/libretiny-esphome
-COPY --from=builder /usr/local/libretiny-esphome-venv /usr/local/libretiny-esphome-venv
+
+RUN bin/python3 -m pip install --upgrade pip \
+ && bin/python3 -m pip install --requirement /usr/local/libretiny-esphome/requirements.txt
 
 ENV DASHBOARD_USER=""
 ENV DASHBOARD_PASSWORD=""
 
-RUN dnf install --assumeyes --setopt=install_weak_deps=False nginx \
+RUN dnf install --assumeyes --setopt=install_weak_deps=False git nginx \
   && dnf clean all \
   && rm --recursive --force /var/cache/yum
 
@@ -58,8 +60,7 @@ RUN ln --symbolic --force /dev/stdout /var/log/nginx/access.log \
  && chmod --recursive g+w /etc/nginx
 
 RUN chown --recursive libretiny: \
-    /usr/local/libretiny-esphome \
-    /usr/local/libretiny-esphome-venv
+    /usr/local/libretiny-esphome
 
 RUN mkdir --parents /etc/libretiny \
  && chown --recursive libretiny: /etc/libretiny

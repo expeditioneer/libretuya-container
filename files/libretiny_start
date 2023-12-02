@@ -20,4 +20,4 @@ printf "Starting NGINX\n"
 /usr/sbin/nginx
 
 cd /usr/local/libretiny-esphome || exit
-/usr/local/libretiny-esphome-venv/bin/python3 -m esphome "${libretiny_args[@]}" /etc/libretiny
+python3 -m esphome "${libretiny_args[@]}" /etc/libretiny
