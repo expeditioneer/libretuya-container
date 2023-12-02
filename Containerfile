@@ -67,6 +67,8 @@ RUN mkdir --parents /etc/libretiny \
 
 USER libretiny
 
+RUN git config --global advice.detachedHead false
+
 EXPOSE 8080
 
 VOLUME ["/etc/libretiny"]
