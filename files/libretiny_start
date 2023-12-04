@@ -6,7 +6,6 @@ export ESPHOME_DASHBOARD_USE_PING=true
 
 libretiny_args=(
   dashboard
-  --socket /tmp/libretiny.sock
 )
 
 if [[ -n ${DASHBOARD_USER} && -n ${DASHBOARD_PASSWORD} ]]; then
@@ -16,8 +15,10 @@ if [[ -n ${DASHBOARD_USER} && -n ${DASHBOARD_PASSWORD} ]]; then
   )
 fi
 
-printf "Starting NGINX\n"
-/usr/sbin/nginx
+if [[ -f /etc/pki/libretiny/server.crt && -f /etc/pki/libretiny/private/server.key ]]; then
+  printf "Enable SSL for Tornado web server\n"
+  patch --quiet --strip=1 --directory=/usr/local/libretiny-esphome < /usr/local/src/tornado-enable-ssl.patch
+fi
 
 cd /usr/local/libretiny-esphome || exit
 python3 -m esphome "${libretiny_args[@]}" /etc/libretiny
