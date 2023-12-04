@@ -12,7 +12,7 @@ RUN git rev-parse --short HEAD >> gitversion
 RUN rm --recursive --force \
     .clang-format .clang-tidy .coveragerc .devcontainer .dockerignore .editorconfig .git .gitattributes .github \
     .gitignore .pre-commit-config.yaml .pre-commit-config.yaml .yamllint docker requirements_optional.txt \
-    requirements_test.txt README.md SUMMARY.md
+    requirements_test.txt SUMMARY.md
 
 ########################################################################################################################
 
@@ -33,8 +33,9 @@ RUN groupadd libretiny --gid 1000 \
 
 COPY --chown=1000:1000 --from=builder /usr/local/libretiny-esphome /usr/local/libretiny-esphome
 
-RUN bin/python3 -m pip install --upgrade pip \
- && bin/python3 -m pip install --requirement /usr/local/libretiny-esphome/requirements.txt
+RUN python3 -m pip install --upgrade pip \
+ && python3 -m pip install --requirement /usr/local/libretiny-esphome/requirements.txt \
+ && python3 -m pip install --editable /usr/local/libretiny-esphome
 
 RUN chown --recursive libretiny: \
     /usr/local/libretiny-esphome
