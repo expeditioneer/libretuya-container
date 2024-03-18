@@ -2,6 +2,9 @@
 
 name: "Build and push container image"
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * 0"
@@ -19,6 +22,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+      - name: Test if SSL patch for Tornado is still applicable
+        run: |
+          PYTHON_USER_SITE_PACKAGES_DIRECTORY=$(python -m site --user-site)
+          python3 -m pip install --no-warn-script-location --user --upgrade pip
+          python3 -m pip install --no-warn-script-location --user esphome
+          patch --strip=1 --directory=${PYTHON_USER_SITE_PACKAGES_DIRECTORY}/esphome/ < files/libretiny-patches/tornado-enable-ssl.patch
 
       - name: "Build container image ${{ github.event.repository.name }}"
         id: build-image
