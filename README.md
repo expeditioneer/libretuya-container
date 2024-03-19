@@ -1,3 +1,7 @@
+# DEPRECATED
+
+These features have been merged into ESPHome therefore this is no longer necessary.
+
 # LibreTiny Container
 
 [![Docker Repository on Quay](https://quay.io/repository/expeditioneer/libretiny/status "Docker Repository on Quay")](https://quay.io/repository/expeditioneer/libretiny)
